@@ -1,13 +1,13 @@
 ---
-- name: Install Nginx on Ubuntu 25
+- name: Install and start Nginx on Ubuntu
   hosts: all
-  gather_facts: yes
-  become: yes
+  become: true
 
   tasks:
     - name: Update apt cache
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
+        cache_valid_time: 3600
 
     - name: Install nginx
       ansible.builtin.apt:
@@ -19,3 +19,9 @@
         name: nginx
         enabled: true
         state: started
+
+    - name: Verify nginx responds locally
+      ansible.builtin.uri:
+        url: http://127.0.0.1
+        return_content: false
+        status_code: 200
