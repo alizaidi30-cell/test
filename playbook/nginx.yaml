@@ -1,0 +1,29 @@
+---
+- name: Install Nginx on Ubuntu 25
+  hosts: all
+  become: yes        # <-- enables sudo for all tasks
+  become_method: sudo
+
+  tasks:
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is enabled and running
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Allow HTTP traffic via UFW (optional)
+      ufw:
+        rule: allow
+        port: "80"
+        proto: tcp
+      ignore_errors: yes
