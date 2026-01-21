@@ -1,8 +1,7 @@
 ---
-- name: Install Nginx on Ubuntu 25
+- name: Install Nginx on Ubuntu 25 (root user)
   hosts: all
-  become: yes
-  become_method: sudo
+  become: false   # root does not need sudo
 
   tasks:
     - name: Update apt cache
@@ -20,14 +19,7 @@
         state: started
         enabled: yes
 
-    - name: Allow HTTP via UFW if UFW is installed
+    - name: Allow HTTP via UFW (only if installed)
       ansible.builtin.command: ufw allow 80/tcp
       register: ufw_allow
-      changed_when: "'Skipping' not in ufw_allow.stdout"
-      failed_when: false
-
-    - name: Enable UFW if installed (optional)
-      ansible.builtin.command: ufw --force enable
-      register: ufw_enable
-      changed_when: "'active' in ufw_enable.stdout or 'Firewall is active' in ufw_enable.stdout"
       failed_when: false
