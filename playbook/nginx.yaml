@@ -1,25 +1,21 @@
 ---
-- name: Install Nginx on Ubuntu 25 (root user)
+- name: Install Nginx on Ubuntu 25
   hosts: all
-  become: false   # root does not need sudo
+  gather_facts: yes
+  become: yes
 
   tasks:
     - name: Update apt cache
       ansible.builtin.apt:
         update_cache: yes
 
-    - name: Install Nginx
+    - name: Install nginx
       ansible.builtin.apt:
         name: nginx
         state: present
 
-    - name: Ensure Nginx is enabled and running
+    - name: Enable and start nginx
       ansible.builtin.systemd:
         name: nginx
+        enabled: true
         state: started
-        enabled: yes
-
-    - name: Allow HTTP via UFW (only if installed)
-      ansible.builtin.command: ufw allow 80/tcp
-      register: ufw_allow
-      failed_when: false
